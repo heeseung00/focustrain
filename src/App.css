@@ -772,6 +772,12 @@ h2.depart {
   .bottom-sheet h4 {
     font-size: var(--fs-sm);
   }
+
+  .header-tools button {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--r-sm);
+  }
 }
 
 @media (max-width: 480px) {

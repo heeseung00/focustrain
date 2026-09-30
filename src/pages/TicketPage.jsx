@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/TicketPage.css';
-import useArriveTime from '../hooks/useArriveTime.jsx';
 import useTimerStore from '../stores/useTimerStore.js';
 import useTripStore from '../stores/useTripStore.js';
 import { stationList } from '../utils/stationList.js';
 import { getTrainInfo } from '../utils/getTrainInfo.js';
-import { formatTime, getTotalTime } from '../utils/time.js';
+import { formatTime, getTotalTime, getArriveTime } from '../utils/time.js';
 
 function TicketPage() {
     // 열차 선택값 받아오기
@@ -17,7 +16,7 @@ function TicketPage() {
     //전체시간
     const totalTime = getTotalTime(focusTime, restCount, restSeconds, isToggleOn);
     // 도착 시간
-    const arriveTime = useArriveTime(totalTime);
+    const arriveTime = getArriveTime(totalTime);
 
     const navigate = useNavigate();
 

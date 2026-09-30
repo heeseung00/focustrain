@@ -1,11 +1,10 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useArriveTime from '../hooks/useArriveTime.jsx';
 import useTripStore from '../stores/useTripStore.js';
 import useTimerStore from '../stores/useTimerStore.js';
 import { getTrainInfo } from '../utils/getTrainInfo.js';
 import { stationList } from '../utils/stationList.js';
-import { formatDurationTime, getTotalTime, getTotalTimeSeconds } from '../utils/time.js';
+import { formatDurationTime, getTotalTime, getTotalTimeSeconds, getArriveTime } from '../utils/time.js';
 import Modal from '../components/Modal.jsx';
 import ProgressBarModule from '@ramonak/react-progress-bar';
 const ProgressBar = ProgressBarModule.default ?? ProgressBarModule;
@@ -39,7 +38,7 @@ function TimerPage() {
     //전체목표시간
     const totalTimeSeconds = getTotalTimeSeconds(focusTime, restCount, restTime, isToggleOn, restOff);
     // 도착 시간
-    const arriveTime = useArriveTime(totalTime);
+    const arriveTime = getArriveTime(totalTime);
 
     const navigate = useNavigate();
 
@@ -66,11 +65,12 @@ function TimerPage() {
         setTimerState(false);
     };
     const handleTimerReset = () => {
-        setRestOff(0);
+        setRestOff(0); // 휴식 시간을 처음 상태로 되돌림
+        prevRestOff.current = 0; // 이전 휴식시간 기록을 처음 상태로 되돌림
 
-        const resetTotalTime = getTotalTime(focusTime, restCount, restTime, isToggleOn);
+        const resetTotalTime = getTotalTimeSeconds(focusTime, restCount, restTime, isToggleOn);
 
-        setRemainingTime(resetTotalTime * 60);
+        setRemainingTime(resetTotalTime);
         // 즉시시작
         handleTimerStart();
         // 중간정차 list 초기화
@@ -140,8 +140,7 @@ function TimerPage() {
         const currentElapsed = totalTimeSeconds - remainingTime;
         const stopUnit = Math.floor(currentElapsed / 5);
         // 집중 구간 시간 설정: 10분 설정시 10분 후 중간정차모달 열림
-        // const isStopTime = currentElapsed > 0 && currentElapsed % (20 * 60) === 0;
-        const isStopTime = currentElapsed > 0 && currentElapsed % 5 === 0; // 테스트용
+        const isStopTime = currentElapsed > 0 && currentElapsed % (20 * 60) === 0;
         const alreadyTriggered = triggeredStopsRef.current.has(stopUnit);
 
         if (isToggleOn && isStopTime && !alreadyTriggered && currentIndex < restCount) {

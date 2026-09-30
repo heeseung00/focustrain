@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import useTripStore from '../stores/useTripStore.js';
-import '../styles/SeatPage.css';
 import SeatGrid from '../components/SeatGrid.jsx';
+import '../styles/SeatPage.css';
 
 const SeatPage = () => {
     const { seats, activeCoach, setActiveCoach, selectedSeat, setSelectedSeat } = useTripStore();
@@ -10,15 +10,11 @@ const SeatPage = () => {
     const handleCoachClick = (coachId) => {
         // 항상 표시
         setActiveCoach(Number(coachId));
-        // // 선택 - 해제 둘 다 포함
-        // setActiveCoach(activeCoach === coachId ? null : coachId);
         setSelectedSeat(null);
     };
 
     // 기차 좌석 선택
     const handleSeatClick = (row, seatType, seatNumber) => {
-        console.log('클릭:', row, seatType, seatNumber);
-
         if (selectedSeat?.row === row && selectedSeat?.seatType === seatType) {
             setSelectedSeat(null);
             return;

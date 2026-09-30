@@ -1,10 +1,9 @@
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useArriveTime from '../hooks/useArriveTime.jsx';
 import useTripStore from '../stores/useTripStore.js';
 import useTimerStore from '../stores/useTimerStore.js';
 import { getTrainInfo } from '../utils/getTrainInfo.js';
-import { formatTime, getTotalTime } from '../utils/time.js';
+import { formatTime, getTotalTime, getArriveTime } from '../utils/time.js';
 import { stationList } from '../utils/stationList.js';
 import Modal from '../components/Modal.jsx';
 import { motion } from 'framer-motion';
@@ -32,22 +31,15 @@ function RoutePage() {
     const { trainKey, selectedStation, travelTime, restCount } = getTrainInfo(train, selected, stationList);
     //전체시간
     const totalTime = getTotalTime(focusTime, restCount, restSeconds, isToggleOn);
-    console.log({
-        focusTime,
-        restCount,
-        restSeconds,
-        isToggleOn,
-        totalTime,
-    });
     // 도착시간
-    const arriveTime = useArriveTime(totalTime);
+    const arriveTime = getArriveTime(totalTime);
 
     // 드롭다운
     const [isOpen, setIsOpen] = useState(false);
     const selectRef = useRef(null);
     const sheetRef = useRef(null);
 
-    useOnClickOutside([sheetRef, selectRef], () => setIsOpen(false));
+    useOnClickOutside(sheetRef, selectRef, () => setIsOpen(false));
 
     // 선택한 열차에 따라 선택 가능한 역 필터링(조건부 랜더링)
     const filterStation = stationList.filter((item) => {
@@ -168,13 +160,12 @@ function RoutePage() {
                                     <div className="title">
                                         <h4>도착</h4>
                                         <div
-                                            ref={selectRef}
                                             className={`select-station ${isOpen ? 'station-active' : ''}`}
                                             onClick={() => setIsOpen((prev) => !prev)}
                                             onChange={handleSelect}>
                                             <h1>{selected}</h1>
 
-                                            <div className="station-scroll">
+                                            <div ref={selectRef} className="station-scroll">
                                                 {isOpen && (
                                                     <StationMenu
                                                         filterStation={filterStation}
@@ -227,7 +218,6 @@ function RoutePage() {
                                         <div
                                             className={`toggle ${isToggleOn ? 'toggle-on' : ''}`}
                                             onClick={() => {
-                                                console.log('토글 클릭 전:', isToggleOn);
                                                 setIsToggleOn(!isToggleOn);
                                             }}>
                                             <div className="toggle-button"></div>
@@ -251,8 +241,6 @@ function RoutePage() {
                                     travelTime={travelTime}
                                     selectedStation={selectedStation}
                                     totalTime={totalTime}
-                                    // restCount={restCount}
-                                    // restSeconds={restSeconds}
                                 />
                             </li>
                         </ul>
@@ -309,9 +297,6 @@ function TimeControl({ focusTime, setFocusTime, selectedStation, totalTime }) {
 
         // 숫자가 아닌 문자열로 더해지는 오류 방지(ex) '90+5 = 905'이런 덧셈 오류를 '90+5 = 95'가 되도록)
         setFocusTime(focusTime + 5);
-
-        // console.log('focusTime:', focusTime + 5);
-        // console.log('totalTime:', totalTime);
     };
 
     const decrease = () => {
@@ -321,9 +306,6 @@ function TimeControl({ focusTime, setFocusTime, selectedStation, totalTime }) {
         }
 
         setFocusTime(focusTime - 5);
-
-        // console.log('focusTime:', focusTime - 5);
-        // console.log('totalTime:', totalTime);
     };
     return (
         <div className="time-control">
@@ -353,7 +335,8 @@ function useOnClickOutside(ref1, ref2, handler) {
         const onPointerDown = (e) => {
             const isInside = ref1.current?.contains(e.target) || ref2.current?.contains(e.target);
 
-            if (isInside) {
+            // 외부클릭(내부를 클릭하지 않았을때)
+            if (!isInside) {
                 handleRef.current(e);
             }
         };
@@ -437,12 +420,9 @@ function BottomSheet({ departure, isOpen, setIsOpen, sheetRef, filterStation, se
         document.removeEventListener('pointerup', handlePointerUp);
 
         // 100vh(전체 높이)에서 50vh(중간 이하) 이하로 드래그하면 닫힘
-        // 드래그 시작 당시 높이가 전체높이와 같다면,
         if (startHeightRef.current === maxHeight) {
-            // (내려가야 하는 vh / 100) × 화면 전체 높이
-            // ex) 0.5 * window.innerHeight, 0.5 × 900 = 450
             const closeDistance = ((maxHeight - 50) / 100) * window.innerHeight;
-            // 현재 드래그 위치와 닫으려는 위치를 비교해서 계산해서50% 이상 내려가면 바텀시트를 닫고 초기 높이를 60으로 한다.
+            // 현재 드래그 위치와 닫으려는 위치를 비교 후 닫힘 기준 50% 이상이면 닫기
             if (delta >= closeDistance) {
                 setIsOpen(false);
                 setSheetHeight(60);
@@ -485,7 +465,7 @@ function BottomSheet({ departure, isOpen, setIsOpen, sheetRef, filterStation, se
         <>
             {isOpen && (
                 <div className="layer">
-                    <div className="dim" onClick={() => setIsOpen(false)}></div>
+                    <div className="dim"></div>
 
                     <motion.div
                         className="bottom-sheet"
