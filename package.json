@@ -1,36 +1,39 @@
 {
-  "name": "focustrain",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "oxlint",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@ramonak/react-progress-bar": "^5.4.0",
-    "@reduxjs/toolkit": "^2.12.0",
-    "@tailwindcss/vite": "^4.3.3",
-    "framer-motion": "^13.2.0",
-    "lodash": "^4.18.1",
-    "react": "^19.2.8",
-    "react-confetti": "^6.4.0",
-    "react-dom": "^19.2.8",
-    "react-redux": "^9.3.0",
-    "react-router-dom": "^7.18.2",
-    "react-use": "^17.6.1",
-    "redux": "^5.0.1",
-    "tailwindcss": "^4.3.3",
-    "use-sound": "^5.0.0",
-    "zustand": "^5.0.15"
-  },
-  "devDependencies": {
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.4",
-    "oxlint": "^1.75.0",
-    "vite": "^8.2.0"
-  }
+    "name": "focustrain",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "homepage": "https://heeseung00.github.io/focustrain/",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "lint": "oxlint",
+        "preview": "vite preview",
+        "deploy": "gh-pages -d build"
+    },
+    "dependencies": {
+        "@ramonak/react-progress-bar": "^5.4.0",
+        "@reduxjs/toolkit": "^2.12.0",
+        "@tailwindcss/vite": "^4.3.3",
+        "framer-motion": "^13.2.0",
+        "gh-pages": "^6.3.0",
+        "lodash": "^4.18.1",
+        "react": "^19.2.8",
+        "react-confetti": "^6.4.0",
+        "react-dom": "^19.2.8",
+        "react-redux": "^9.3.0",
+        "react-router-dom": "^7.18.2",
+        "react-use": "^17.6.1",
+        "redux": "^5.0.1",
+        "tailwindcss": "^4.3.3",
+        "use-sound": "^5.0.0",
+        "zustand": "^5.0.15"
+    },
+    "devDependencies": {
+        "@types/react": "^19.2.17",
+        "@types/react-dom": "^19.2.3",
+        "@vitejs/plugin-react": "^6.0.4",
+        "oxlint": "^1.75.0",
+        "vite": "^8.2.0"
+    }
 }
